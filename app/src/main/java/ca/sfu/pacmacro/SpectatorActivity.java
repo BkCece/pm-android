@@ -1,11 +1,8 @@
 package ca.sfu.pacmacro;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -19,6 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import Utils.BitmapUtil;
 import ca.sfu.pacmacro.API.PacMacroClient;
 import ca.sfu.pacmacro.Controller.CharacterDisplayCriteria;
 import ca.sfu.pacmacro.Controller.CharacterManager;
@@ -75,7 +73,7 @@ public class SpectatorActivity extends AppCompatActivity implements OnMapReadyCa
         InitializeMarkerCallback characterMarkerCallback = new InitializeMarkerCallback() {
             @Override
             public Marker initializeMarker(LatLng latLng, String name, int drawableResourceId) {
-                Bitmap mDotMarkerBitmap = getBitmapFromDrawable(drawableResourceId);
+                Bitmap mDotMarkerBitmap = BitmapUtil.getBitmapFromDrawable(SpectatorActivity.this, drawableResourceId);
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(latLng)
                         .title(name)
@@ -83,7 +81,7 @@ public class SpectatorActivity extends AppCompatActivity implements OnMapReadyCa
                 return mMap.addMarker(markerOptions);
             }
         };
-        mCharacterManager = new CharacterManager(mApiClient, characterMarkerCallback, mGameController, mDisplayCriteria);
+        mCharacterManager = new CharacterManager(mApiClient, characterMarkerCallback, mGameController, mDisplayCriteria, this);
 
         InitializeCircleCallback pelletCircleCallback = new InitializeCircleCallback() {
             @Override
@@ -109,17 +107,6 @@ public class SpectatorActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void centerMap() {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(49.283625, -123.116455), 15f));
-    }
-
-    @NonNull
-    private Bitmap getBitmapFromDrawable(int drawableResourceId) {
-        int px = getResources().getDimensionPixelSize(R.dimen.character_map_icon_size);
-        Bitmap mDotMarkerBitmap = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(mDotMarkerBitmap);
-        Drawable shape = getResources().getDrawable(drawableResourceId);
-        shape.setBounds(0, 0, mDotMarkerBitmap.getWidth(), mDotMarkerBitmap.getHeight());
-        shape.draw(canvas);
-        return mDotMarkerBitmap;
     }
 
     @Override

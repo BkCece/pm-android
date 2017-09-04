@@ -41,7 +41,7 @@ public class PlayerActivity extends AppCompatActivity {
         mGameController = new GameController();
         mApiClient = new PacMacroClient();
         mDisplayCriteria = new CharacterDisplayCriteria(CharacterDisplayCriteria.CRITERIA_PLAYER);
-        mCharacterManager = new CharacterManager(mApiClient, mGameController, mDisplayCriteria);
+        mCharacterManager = new CharacterManager(mApiClient, mGameController, mDisplayCriteria, this);
 
         mApiClient.selectCharacter(mSelectedCharacterType, 0, 0);
         //TODO: set mSelectedCharacter state

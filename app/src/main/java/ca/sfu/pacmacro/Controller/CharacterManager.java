@@ -1,5 +1,6 @@
 package ca.sfu.pacmacro.Controller;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -26,21 +27,24 @@ public class CharacterManager {
     private List<Character> mCharacterList = new ArrayList<>();
     private InitializeMarkerCallback mMapCallback;
     private CharacterDisplayCriteria mDisplayCriteria;
+    private Context context;
 
-    public CharacterManager(PacMacroClient apiClient, GameController gameController, CharacterDisplayCriteria displayCriteria) {
+
+    public CharacterManager(PacMacroClient apiClient, GameController gameController, CharacterDisplayCriteria displayCriteria, Context context) {
         this(apiClient, new InitializeMarkerCallback() {
             @Override
             public Marker initializeMarker(LatLng latLng, String name, int drawableResourceId) {
                 return null;
             }
-        }, gameController, displayCriteria);
+        }, gameController, displayCriteria, context);
     }
 
     public CharacterManager(PacMacroClient apiClient, InitializeMarkerCallback callback, GameController gameController,
-                            CharacterDisplayCriteria displayCriteria) {
+                            CharacterDisplayCriteria displayCriteria, Context context) {
         this.mApiClient = apiClient;
         this.mMapCallback = callback;
         this.mDisplayCriteria = displayCriteria;
+        this.context = context;
 
         EventBus.getDefault().register(this);
 
@@ -51,6 +55,7 @@ public class CharacterManager {
                 Log.v(TAG, "Get characters request sent");
             }
         });
+
     }
 
     @Subscribe
@@ -99,6 +104,12 @@ public class CharacterManager {
                     displayCharacter = false;
                 }
                 character.updateMarkerVisibility(displayCharacter);
+
+                if (character.getState() == Character.CharacterState.POWERUP) {
+                    character.setPowerupIcon(context);
+                } else {
+                    character.setDefaultIcon(context);
+                }
             }
         }
         else {
